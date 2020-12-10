@@ -7,6 +7,7 @@ import DirectionsIcon from '@material-ui/icons/Directions';
 import useStyles from '../util/styles';
 import Util from '../util/util';
 import md5 from 'md5';
+import firebase from '../util/firebase';
 
 function Login(props) {
     const secretWord = 'd7de842da5db283355d91178c24a2b96';
@@ -24,7 +25,7 @@ function Login(props) {
     const [secretValidationMessage, setSecretValidationMessage] = useState('');
     const [secret, setSecret] = useState('');
 
-        const onEmailInput = (event) => {
+    const onEmailInput = (event) => {
         var v = event.target.value;
         checkEmailValid(v);
     };
@@ -69,9 +70,9 @@ function Login(props) {
             setPasswordRepeatValidationMessage('');
             return true;
         } else if (v !== password) {
-            setPasswordRepeatValidation(false);
+            setPasswordRepeatValidation(true);
             setPasswordRepeatValidationMessage('Nope! They should match!');
-            return true;
+            return false;
         } else {
             setPasswordRepeatValidation(true);
             setPasswordRepeatValidationMessage('Nooooooo! This is empty! You can\'t do this to me!');
@@ -91,9 +92,9 @@ function Login(props) {
             setSecretValidationMessage('');
             return true;
         } else if (!md5Check) {
-            setSecretValidation(false);
+            setSecretValidation(true);
             setSecretValidationMessage('No! >:(');
-            return true;
+            return false;
         } else {
             setSecretValidation(true);
             setSecretValidationMessage('Nooooooo! This is empty! You can\'t do this to me!');
@@ -102,7 +103,17 @@ function Login(props) {
     }
 
     const onSignUpButtonClick = () => {
-        
+        if (checkEmailValid(email) && checkPasswordValid(password) && checkPasswordRepeatValid(passwordRepeat) && checkSecretValid(secret)) {
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((user) => {
+                console.log(user);
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorMessage);
+            });
+        }
     }
 
     return (
