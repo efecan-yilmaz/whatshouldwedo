@@ -10,7 +10,6 @@ import md5 from 'md5';
 import firebase from '../util/firebase';
 
 function Login(props) {
-    const secretWord = 'd7de842da5db283355d91178c24a2b96';
     const classes = useStyles();
     const [emailValidation, setEmailValidation] = useState(false);
     const [emailValidationMessage, setEmailValidationMessage] = useState('');
@@ -86,7 +85,7 @@ function Login(props) {
     };
 
     const checkSecretValid = (v) => {
-        var md5Check = md5(v) === secretWord;
+        var md5Check = md5(v) === process.env.REACT_APP_SECRET_WORD;
         if (v && v.length > 0 && md5Check) {
             setSecretValidation(false);
             setSecretValidationMessage('');
