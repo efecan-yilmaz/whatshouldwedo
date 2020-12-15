@@ -7,7 +7,7 @@ import DirectionsIcon from '@material-ui/icons/Directions';
 import useStyles from '../util/styles';
 import Util from '../util/util';
 import md5 from 'md5';
-import firebase from '../util/firebase';
+import {firebaseAuth} from '../util/firebase';
 
 function Login(props) {
     const classes = useStyles();
@@ -103,7 +103,7 @@ function Login(props) {
 
     const onSignUpButtonClick = () => {
         if (checkEmailValid(email) && checkPasswordValid(password) && checkPasswordRepeatValid(passwordRepeat) && checkSecretValid(secret)) {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
+            firebaseAuth.createUserWithEmailAndPassword(email, password)
             .then((user) => {
                 console.log(user);
             })
