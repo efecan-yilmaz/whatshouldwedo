@@ -6,6 +6,8 @@ import SendIcon from '@material-ui/icons/Send';
 import useStyles from '../util/styles';
 import DirectionsIcon from '@material-ui/icons/Directions';
 import Util from '../util/util';
+import { firebaseAuth } from '../util/firebase';
+import { useHistory } from "react-router-dom";
 
 function Login(props) {
     const classes = useStyles();
@@ -15,6 +17,7 @@ function Login(props) {
     const [passwordValidation, setPasswordValidation] = useState(false);
     const [passwordValidationMessage, setPasswordValidationMessage] = useState('');
     const [password, setPassword] = useState('');
+    const history = useHistory();
 
     const onEmailInput = (event) => {
         var v = event.target.value;
@@ -52,9 +55,15 @@ function Login(props) {
 
     const onLoginButtonClick = () => {
         if (checkEmailValid(email) && checkPasswordValid(password)) {
-            alert('Yes!');
-        } else {
-            alert('No!');
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+            .then((user) => {
+                history.push('/');
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorMessage);
+            });
         }
     }
 
