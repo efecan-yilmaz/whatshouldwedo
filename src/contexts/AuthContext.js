@@ -1,5 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {firebaseAuth} from '../util/firebase';
+import { useHistory } from "react-router-dom";
 
 const AuthContext = React.createContext();
 
@@ -10,6 +11,7 @@ export function useAuth() {
 export function AuthProvider({children}) {
     const [currentUser, setCurrentUser] = useState();
     const [loading, setLoading] = useState(true);
+    const history = useHistory();
 
     const value = {
         currentUser
@@ -20,6 +22,11 @@ export function AuthProvider({children}) {
             setCurrentUser(user);
             setLoading(false);
             console.log(user);
+            if (user && history.location.pathname === '/login') {
+                history.push('/');
+            } else if (user && history.location.pathname === '/sigup') {
+                history.push('/');
+            }
         });
 
         return unsubscribe;

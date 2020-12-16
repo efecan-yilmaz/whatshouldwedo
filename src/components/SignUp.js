@@ -8,7 +8,6 @@ import useStyles from '../util/styles';
 import Util from '../util/util';
 import md5 from 'md5';
 import {firebaseAuth} from '../util/firebase';
-import { useHistory } from 'react-router-dom';
 
 function Login(props) {
     const classes = useStyles();
@@ -24,7 +23,6 @@ function Login(props) {
     const [secretValidation, setSecretValidation] = useState(false);
     const [secretValidationMessage, setSecretValidationMessage] = useState('');
     const [secret, setSecret] = useState('');
-    const history = useHistory();
 
     const onEmailInput = (event) => {
         var v = event.target.value;
@@ -107,7 +105,6 @@ function Login(props) {
         if (checkEmailValid(email) && checkPasswordValid(password) && checkPasswordRepeatValid(passwordRepeat) && checkSecretValid(secret)) {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
             .then((user) => {
-                history.push('/');
             })
             .catch((error) => {
                 var errorCode = error.code;
