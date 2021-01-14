@@ -115,7 +115,7 @@ function Login(props) {
     }
 
     return (
-        <div className={classes.box}>
+        <div>
             <Grid container spacing={3}>
                 <Grid className={classes.grid} item xs={12}>
                     <h1 className={classes.title}>Welcome to the Club Kido!</h1>

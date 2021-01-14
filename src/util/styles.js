@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
             color: '#800000'
         },
         textField: {
-            width: '60%'
+            width: '70%'
         },
         lineBreak: {
             border: '2px solid #BDBDBD',
