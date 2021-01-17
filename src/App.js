@@ -5,6 +5,7 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import Movies from './components/Movies';
 
 class App extends Component {
     render () {
@@ -15,6 +16,7 @@ class App extends Component {
                         <PrivateRoute path="/" exact component={Dashboard} />
                         <Route path="/login" exact component={Login} />
                         <Route path="/signup" exact component={SignUp} />
+                        <Route path="/movies" exact component={Movies} />
                     </Switch>
                 </AuthProvider>
             </BrowserRouter>

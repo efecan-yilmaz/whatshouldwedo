@@ -25,6 +25,10 @@ const useStyles = makeStyles((theme: Theme) =>
             border: '2px solid #BDBDBD',
             width: '80%',
             borderRadius: '5px'
+        },
+        pageTitle: {
+            margin: 10,
+            textAlign: 'center'
         }
     })
 );

@@ -29,7 +29,6 @@ export default function AppBar() {
     const useCheckMobileScreen = () => {
         const [width, setWidth] = useState(window.innerWidth);
         const handleWindowSizeChange = () => {
-            console.log(window.innerWidth);
             setWidth(window.innerWidth);
         }
     

@@ -21,10 +21,9 @@ export function AuthProvider({children}) {
         const unsubscribe = firebaseAuth.onAuthStateChanged(user => {
             setCurrentUser(user);
             setLoading(false);
-            console.log(user);
             if (user && history.location.pathname === '/login') {
                 history.push('/');
-            } else if (user && history.location.pathname === '/sigup') {
+            } else if (user && history.location.pathname === '/signup') {
                 history.push('/');
             }
         });
