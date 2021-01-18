@@ -29,12 +29,28 @@ export default function Movies() {
             ...prevState,
             addDialogOpen: true
         }));
-    }
+    };
+
+    const onDialogClose = () => {
+        setState(prevState => ({
+            ...prevState,
+            addDialogOpen: false
+        }));
+    };
+
+    const onDialogOKPressed = () => {
+        setState(prevState => ({
+            ...prevState,
+            addDialogOpen: false
+        }));
+    };
 
     return (
         <div>
             <AppBar />
-            <AddDialog open={state.addDialogOpen} title={'Add a Movie'} text={'Fill in the blanks to add a movie. You know the drill!! Yay!!'} />
+            <AddDialog open={state.addDialogOpen} title={'Add a Movie'} text={'Fill in the blanks to add a movie. You know the drill!! Yay!!'} onClose={onDialogClose} 
+                onOKPressed={onDialogOKPressed} mainAddFieldText={'Movie Title'} linkToText={'IMDb link'}
+            />
             <Typography variant="h2" className={classes.pageTitle}>
                 MOVIES
             </Typography>
