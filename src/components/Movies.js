@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from './AppBar';
 import Typography from '@material-ui/core/Typography';
 import useStyles from '../util/styles';
@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import AddDialog from './AddDialog';
 
 const useLocalStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -17,16 +18,23 @@ const useLocalStyles = makeStyles((theme: Theme) =>
 );
 
 export default function Movies() {
+    const [state, setState] = useState({
+        addDialogOpen: false
+    });
     const classes = useStyles();
     const localClasses = useLocalStyles();
 
     const addMovie = () => {
-        
+        setState(prevState => ({
+            ...prevState,
+            addDialogOpen: true
+        }));
     }
 
     return (
         <div>
             <AppBar />
+            <AddDialog open={state.addDialogOpen} title={'Add a Movie'} text={'Fill in the blanks to add a movie. You know the drill!! Yay!!'} />
             <Typography variant="h2" className={classes.pageTitle}>
                 MOVIES
             </Typography>
