@@ -40,7 +40,7 @@ function Login(props) {
     };
 
     const checkEmailValid = (v) => {
-        if (!(v && v.length) || !Util().checkEmailRegex(v)) {
+        if (!(v && v.length) || !Util.checkEmailRegex(v)) {
             setState(prevState => ({
                 ...prevState,
                 email: {

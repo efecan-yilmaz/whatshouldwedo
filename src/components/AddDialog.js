@@ -13,21 +13,81 @@ import TextField from '@material-ui/core/TextField';
 
 export default function AddDialog(props) {
     const [open, setOpen] = useState(false);
+    const [state, setState] = useState({
+        name: {
+            val: '',
+            validation: false,
+            message: ''
+        },
+        linkTo: {
+            val: ''
+        },
+        comment: {
+            val: ''
+        }
+    });
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
         setOpen(props.open);
+        setState({
+            name: {
+                val: '',
+                validation: false,
+                message: ''
+            },
+            linkTo: {
+                val: ''
+            },
+            comment: {
+                val: ''
+            }
+        });
     }, [props.open])
 
     const handleClose = () => {
-        props.onClose();
         setOpen(false);
+        props.onClose();
     };
 
     const handleOKPress = () => {
-        props.onOKPressed();
-        setOpen(false);
+        if (!checkNameInput(state.name.val)) return;
+        
+        props.onOKPressed({
+            name: state.name.val,
+            comment: state.comment.val,
+            linkTo: state.linkTo.val
+        });
+    }
+
+    const onNameInput = (event) => {
+        var v = event.target.value;
+        checkNameInput(v);
+    }
+
+    const checkNameInput = (v) => {
+        if (!v) {
+            setState(prevState => ({
+                ...prevState,
+                name: {
+                    ...prevState.name,
+                    error: true,
+                    message: 'Don\'t skip the name!!'
+                }
+            }));
+            return false;
+        } else {
+            setState(prevState => ({
+                ...prevState,
+                name: {
+                    ...prevState.name,
+                    error: false,
+                    message: ''
+                }
+            }));
+            return true;            
+        }
     }
 
     return (
@@ -48,6 +108,11 @@ export default function AddDialog(props) {
                         id="name"
                         label={props.mainAddFieldText}
                         fullWidth
+                        value={state.name.val} 
+                        onChange={(e)=>setState(prevState => ({...prevState, name: { ...prevState.name, val: e.target.value}}))} 
+                        onBlur={onNameInput} 
+                        error={state.name.error} 
+                        helperText={state.name.message} 
                     />
                     <TextField
                         margin="dense"
@@ -55,6 +120,8 @@ export default function AddDialog(props) {
                         label={props.linkToText}
                         type="url"
                         fullWidth
+                        value={state.name.linkTo} 
+                        onChange={(e)=>setState(prevState => ({...prevState, linkTo: {val: e.target.value}}))} 
                     />
                     <TextField
                         margin="dense"
@@ -63,6 +130,8 @@ export default function AddDialog(props) {
                         multiline
                         fullWidth
                         rowsMax={4}
+                        value={state.comment.val} 
+                        onChange={(e)=>setState(prevState => ({...prevState, comment: {val: e.target.value}}))} 
                     />
                 </DialogContent>
                 <DialogActions>
