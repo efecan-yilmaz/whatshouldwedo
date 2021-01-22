@@ -7,6 +7,8 @@ import useStyles from '../util/styles';
 import DirectionsIcon from '@material-ui/icons/Directions';
 import Util from '../util/util';
 import { firebaseAuth } from '../util/firebase';
+import ProgressIndicator from './ProgressIndicator';
+import Alert from './Alert';
 
 function Login(props) {
     const classes = useStyles();
@@ -20,7 +22,9 @@ function Login(props) {
             val: '',
             validation: false,
             message: ''
-        }
+        },
+        showProgress: false,
+        showAlert: false
     });
 
     const onEmailInput = (event) => {
@@ -83,13 +87,26 @@ function Login(props) {
 
     const onLoginButtonClick = () => {
         if (checkEmailValid(state.email.val) && checkPasswordValid(state.password.val)) {
+            setState(prevState => ({
+                ...prevState,
+                showProgress: true
+            }));
             firebaseAuth.signInWithEmailAndPassword(state.email.val, state.password.val)
             .then((user) => {
+                setState(prevState => ({
+                    ...prevState,
+                    showProgress: true
+                }));
             })
             .catch((error) => {
                 var errorCode = error.code;
                 var errorMessage = error.message;
-                console.log(errorMessage, errorCode);
+                console.log(errorCode, errorMessage);
+                setState(prevState => ({
+                    ...prevState,
+                    showProgress: true,
+                    showAlert: true
+                }));
             });
         }
     }
@@ -97,6 +114,8 @@ function Login(props) {
     return (
         <div>
             <div>
+                <Alert open={state.showAlert} message="Nooo! Something is wrong!! Check the console you nerd!" type="error"/>
+                <ProgressIndicator open={state.showProgress} />
                 <Grid container spacing={3}>
                     <Grid className={classes.grid} item xs={12}>
                         <h1 className={classes.title}>Show me what you got!!</h1>

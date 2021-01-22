@@ -7,7 +7,9 @@ import DirectionsIcon from '@material-ui/icons/Directions';
 import useStyles from '../util/styles';
 import Util from '../util/util';
 import md5 from 'md5';
-import {firebaseAuth} from '../util/firebase';
+import { firebaseAuth, firebaseDatabase } from '../util/firebase';
+import ProgressIndicator from './ProgressIndicator';
+import Alert from './Alert';
 
 function Login(props) {
     const classes = useStyles();
@@ -31,7 +33,15 @@ function Login(props) {
             val: '',
             error: false,
             message: ''
-        }
+        },
+        name: {
+            val: '',
+            error: false,
+            message: ''
+        },
+        showProgress: false,
+        showAlert: false,
+        alertMessage: ''
     });
 
     const onEmailInput = (event) => {
@@ -60,6 +70,35 @@ function Login(props) {
                 }
             }));
             return true;
+        }
+    }
+        
+    const onNameInput = (event) => {
+        const v = event.target.value;
+        checkNameValid(v);
+    };
+
+    const checkNameValid = (v) => {
+        if (v && v.length > 0) {
+            setState(prevState => ({
+                ...prevState,
+                name: {
+                    ...prevState.name,
+                    error: false,
+                    message: ''
+                }
+            }));
+            return true;
+        } else {
+            setState(prevState => ({
+                ...prevState,
+                name: {
+                    ...prevState.name,
+                    error: true,
+                    message: 'I just wanted to meet you! :('
+                }
+            }));
+            return false;
         }
     }
     
@@ -172,26 +211,57 @@ function Login(props) {
     }
 
     const onSignUpButtonClick = () => {
-        if (checkEmailValid(state.email.val) && checkPasswordValid(state.password.val) && checkPasswordRepeatValid(state.passwordRepeat.val) && checkSecretValid(state.secret.val)) {
+        if (checkEmailValid(state.email.val) && checkPasswordValid(state.password.val) && 
+            checkPasswordRepeatValid(state.passwordRepeat.val) && 
+            checkSecretValid(state.secret.val) &&
+            checkNameValid(state.name.val)) {
+            setState(prevState => ({
+                ...prevState,
+                showProgress: true
+            }));
             firebaseAuth.createUserWithEmailAndPassword(state.email.val, state.password.val)
             .then((user) => {
+                setState(prevState => ({
+                    ...prevState,
+                    showProgress: false
+                }));
+                if (!user) return;
+                firebaseDatabase.ref('users/' + user.user.uid).set({
+                    name: state.name.val,
+                    email: state.email.val
+                }, function(error) {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
             })
             .catch((error) => {
                 var errorCode = error.code;
                 var errorMessage = error.message;
-                console.log(errorMessage, errorCode);
+                console.log(errorCode, errorMessage);
+                setState(prevState => ({
+                    ...prevState,
+                    showProgress: false,
+                    showAlert: true,
+                    alertMessage: errorMessage
+                }));
             });
         }
     }
 
     return (
         <div>
+            <Alert open={state.showAlert} message={state.alertMessage} type="error"/>
+            <ProgressIndicator open={state.showProgress} />
             <Grid container spacing={3}>
                 <Grid className={classes.grid} item xs={12}>
                     <h1 className={classes.title}>Welcome to the Club Kido!</h1>
                 </Grid>
                 <Grid className={classes.grid} item xs={12}>
                     <TextField className={classes.textField} id="emailTextField" label="Feed me your e-mail address!" value={state.email.val} onChange={(e)=>setState(prevState => ({...prevState, email: { ...prevState.email, val: e.target.value}}))} onBlur={onEmailInput} variant="outlined" error={state.email.error} helperText={state.email.message} />
+                </Grid>
+                <Grid className={classes.grid} item xs={12}>
+                    <TextField className={classes.textField} id="nameTextField" label="Give me your name!" value={state.name.val} onChange={(e)=>setState(prevState => ({...prevState, name: { ...prevState.name, val: e.target.value}}))} onBlur={onNameInput} variant="outlined" error={state.name.error} helperText={state.name.message} />
                 </Grid>
                 <Grid className={classes.grid} item xs={12}>
                     <TextField className={classes.textField} id="passwordTextField" type="password" label="Choose! Your! Password! Wisely!" value={state.password.val} onChange={(e)=>setState(prevState => ({...prevState, password: { ...prevState.password, val: e.target.value}}))} variant="outlined" onBlur={onPasswordInput} error={state.password.error} helperText={state.password.message} />
