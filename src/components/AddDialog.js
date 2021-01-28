@@ -44,7 +44,7 @@ export default function AddDialog(props) {
                 val: ''
             }
         });
-    }, [props.open])
+    }, [props.open]);
 
     const handleClose = () => {
         setOpen(false);
@@ -98,7 +98,7 @@ export default function AddDialog(props) {
                 onClose={handleClose}
             >
                 <DialogTitle id="add-dialog-title">{props.title}</DialogTitle>
-                <DialogContent>
+                <DialogContent dividers>
                     <DialogContentText>
                         {props.text}
                     </DialogContentText>
@@ -135,13 +135,13 @@ export default function AddDialog(props) {
                     />
                 </DialogContent>
                 <DialogActions>
+                    <Button onClick={handleOKPress} color="secondary" startIcon={<SaveIcon />} variant="outlined">
+                        Save
+                    </Button>
                     <Button onClick={handleClose} color="primary" startIcon={<CancelIcon />}>
                         Cancel
                     </Button>
-                    <Button onClick={handleOKPress} color="primary" startIcon={<SaveIcon />}>
-                        Save
-                    </Button>
-                    </DialogActions>
+                </DialogActions>
             </Dialog>
         </>
     )

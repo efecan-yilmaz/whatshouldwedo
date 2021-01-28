@@ -21,6 +21,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
+import DetailsDialog from './DetailsDialog';
+import IconButton from '@material-ui/core/IconButton';
 
 const useLocalStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,6 +49,10 @@ const useLocalStyles = makeStyles((theme: Theme) =>
 export default function Entity(props) {
     const [state, setState] = useState({
         addDialogOpen: false,
+        detailsDialog: {
+            open: false,
+            data: {}
+        },
         showProgress: false,
         showAlert: false,
         alertText: '',
@@ -135,6 +142,26 @@ export default function Entity(props) {
         });        
     };
 
+    const onDetailsClick = (event, key) => {
+        setState(prevState => ({
+            ...prevState,
+            detailsDialog: {
+                open: true,
+                data: prevState.tableData[key]
+            }
+        }));
+    };
+
+    const onDetailsDialogClose = () => {
+        setState(prevState => ({
+            ...prevState,
+            detailsDialog: {
+                open: false,
+                data: {}
+            }
+        }));
+    };
+
     return (
         <div>
             <AppBar />
@@ -143,6 +170,7 @@ export default function Entity(props) {
             <AddDialog open={state.addDialogOpen} title={'Add a ' + entityTypeCapital} text={'Fill in the blanks to add a ' + props.entityType + '. You know the drill!! Yay!!'} onClose={onDialogClose} 
                 onOKPressed={onDialogOKPressed} mainAddFieldText={entityTypeCapital + ' Title'} linkToText={props.linkToLabel}
             />
+            <DetailsDialog open={state.detailsDialog.open} data={state.detailsDialog.data} onClose={onDetailsDialogClose}/>
             <Typography variant="h2" className={classes.pageTitle}>
                 {props.entityTitle}
             </Typography>
@@ -164,7 +192,7 @@ export default function Entity(props) {
                         startIcon={<RefreshIcon />}
                         color="secondary"
                         onClick={() => {}}
-                    >Suggest a Random {entityTypeCapital}</Button>
+                    >Suggest Random</Button>
                 </Grid>
             </Grid>
             <hr className={classes.lineBreak}/>
@@ -179,6 +207,7 @@ export default function Entity(props) {
                                 <TableCell>Title</TableCell>
                                 <TableCell>Creator</TableCell>
                                 <TableCell align="right">Details</TableCell>
+                                <TableCell>{props.doneTitle}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -192,7 +221,10 @@ export default function Entity(props) {
                                             {state.tableData[key].userName}
                                         </TableCell>
                                         <TableCell align="right">
-                                            <Button startIcon={<DetailsIcon />} variant="outlined" color="secondary">Press to see!</Button>
+                                            <IconButton aria-label="details" onClick={(event) => onDetailsClick(event, key)}><DetailsIcon /></IconButton>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Checkbox disabled={true} color="primary" checked={state.tableData[key].done}/>
                                         </TableCell>
                                     </TableRow>
                                 )) : <TableRow><TableCell><Typography variant="h5" className={classes.pageTitle}>Nothing to see here! Add something!!</Typography></TableCell></TableRow>
