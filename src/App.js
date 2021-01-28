@@ -6,6 +6,9 @@ import SignUp from './components/SignUp';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Movies from './components/Movies';
+import Series from './components/Series';
+import Activities from './components/Activities';
+import Music from './components/Music';
 
 class App extends Component {
     render () {
@@ -16,7 +19,10 @@ class App extends Component {
                         <PrivateRoute path="/" exact component={Dashboard} />
                         <Route path="/login" exact component={Login} />
                         <Route path="/signup" exact component={SignUp} />
-                        <Route path="/movies" exact component={Movies} />
+                        <PrivateRoute path="/movies" exact component={Movies} />
+                        <PrivateRoute path="/series" exact component={Series} />
+                        <PrivateRoute path="/activities" exact component={Activities} />
+                        <PrivateRoute path="/music" exact component={Music} />
                     </Switch>
                 </AuthProvider>
             </BrowserRouter>

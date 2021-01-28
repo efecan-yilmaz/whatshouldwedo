@@ -35,6 +35,13 @@ export default function DetailsDialog(props) {
         window.open(link, '_blank');
     };
 
+    const handleMarAsDonePress = (event) => {
+        props.onMarkAsDonePress({
+            id: props.dataId,
+            done: !props.data.done
+        });
+    }
+
     return (
         <>
             <Dialog
@@ -80,8 +87,8 @@ export default function DetailsDialog(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="secondary" startIcon={<CheckIcon />} variant="outlined">
-                        Mark as done!
+                    <Button onClick={handleMarAsDonePress} color="secondary" startIcon={<CheckIcon />} variant="outlined">
+                        {props.data.done ? "Mark as not done!" : "Mark as done!"}
                     </Button>
                     <Button onClick={handleClose} color="primary" startIcon={<CancelIcon />}>
                         Cancel

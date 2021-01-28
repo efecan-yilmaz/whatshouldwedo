@@ -116,7 +116,8 @@ export default function Entity(props) {
             title: data.name,
             comment: data.comment,
             linkTo: data.linkTo,
-            user: currentUser.uid
+            user: currentUser.uid,
+            done: false
         }, function(error) {
             if (error) {
                 console.log(error);
@@ -147,7 +148,8 @@ export default function Entity(props) {
             ...prevState,
             detailsDialog: {
                 open: true,
-                data: prevState.tableData[key]
+                data: prevState.tableData[key],
+                dataId: key
             }
         }));
     };
@@ -157,9 +159,74 @@ export default function Entity(props) {
             ...prevState,
             detailsDialog: {
                 open: false,
-                data: {}
+                data: {},
+                dataId: null
             }
         }));
+    };
+
+    const onDetailsDialogMarkAsDonePress = (data) => {
+        setState(prevState => ({
+            ...prevState,
+            showProgress: true
+        }));
+        firebaseDatabase.ref(props.dbEntity + data.id).update({done: data.done}, function(error) {
+            if (error) {
+                console.log(error);
+                setState(prevState => ({
+                    ...prevState,
+                    showAlert: true,
+                    alertText: 'Nooo! Something is wrong!! Check the console you nerd!',
+                    alertType: 'error'
+                }));
+            } else {
+                setState(prevState => ({
+                    ...prevState,
+                    showAlert: true,
+                    alertText: 'Yay! ' + entityTypeCapital + ' is updated!',
+                    alertType: 'success'
+                }));
+            }
+            setState(prevState => ({
+                ...prevState,
+                showProgress: false,
+                detailsDialog: {
+                    open: false,
+                    data: {},
+                    dataId: null
+                }
+            }));
+        })
+    };
+
+    const onSuggestClick = () => {
+        let candidates = [];
+        if (state.tableData) {
+            for (var d in state.tableData) {
+                if (state.tableData.hasOwnProperty(d) && !state.tableData[d].done) candidates.push(d);
+            }
+        }
+
+        if (candidates.length) {
+            const rnd = Math.floor(Math.random() * candidates.length);
+            console.log(rnd);
+            setState(prevState => ({
+                ...prevState,
+                detailsDialog: {
+                    open: true,
+                    data: prevState.tableData[candidates[rnd]],
+                    dataId: candidates[rnd]
+                }
+            }));
+            console.log(rnd)
+        } else {
+            setState(prevState => ({
+                ...prevState,
+                showAlert: true,
+                alertText: 'Nothing to suggest :/ Move along!',
+                alertType: 'warning'
+            }));
+        }
     };
 
     return (
@@ -170,7 +237,7 @@ export default function Entity(props) {
             <AddDialog open={state.addDialogOpen} title={'Add a ' + entityTypeCapital} text={'Fill in the blanks to add a ' + props.entityType + '. You know the drill!! Yay!!'} onClose={onDialogClose} 
                 onOKPressed={onDialogOKPressed} mainAddFieldText={entityTypeCapital + ' Title'} linkToText={props.linkToLabel}
             />
-            <DetailsDialog open={state.detailsDialog.open} data={state.detailsDialog.data} onClose={onDetailsDialogClose}/>
+            <DetailsDialog open={state.detailsDialog.open} data={state.detailsDialog.data} dataId={state.detailsDialog.dataId} onClose={onDetailsDialogClose} onMarkAsDonePress={onDetailsDialogMarkAsDonePress}/>
             <Typography variant="h2" className={classes.pageTitle}>
                 {props.entityTitle}
             </Typography>
@@ -186,12 +253,12 @@ export default function Entity(props) {
                     >Add a {entityTypeCapital}</Button>
                 </Grid>
                 <Grid className={classes.grid} item xs={6}>
-                <Button
+                    <Button
                         className={localClasses.localButton}
                         variant="outlined"
                         startIcon={<RefreshIcon />}
                         color="secondary"
-                        onClick={() => {}}
+                        onClick={onSuggestClick}
                     >Suggest Random</Button>
                 </Grid>
             </Grid>
@@ -207,7 +274,7 @@ export default function Entity(props) {
                                 <TableCell>Title</TableCell>
                                 <TableCell>Creator</TableCell>
                                 <TableCell align="right">Details</TableCell>
-                                <TableCell>{props.doneTitle}</TableCell>
+                                <TableCell align="right">{props.doneTitle}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
